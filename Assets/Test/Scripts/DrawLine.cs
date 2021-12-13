@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DrawLine : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class DrawLine : MonoBehaviour
     private Vector3 prePos;
     private Vector3 curPos;
     private bool onDrawArea;
+    private Slider inkAmountSlider;
 
+    public GameObject inkAmountBar;
     public float maxInkAmount;
     public float currentInkAmount;
     public float drawTreshold;
@@ -24,6 +27,9 @@ public class DrawLine : MonoBehaviour
         positionCount = 0;
         mainCamera = Camera.main;
         currentInkAmount = maxInkAmount;
+
+        inkAmountSlider = inkAmountBar.GetComponent<Slider>();
+        inkAmountSlider.value = 1;
     }
 
     // Update is called once per frame
@@ -72,6 +78,7 @@ public class DrawLine : MonoBehaviour
                 lineRenderer.positionCount = positionCount;
                 lineRenderer.SetPosition(positionCount - 1, curPos);
                 prePos = curPos;
+                inkAmountSlider.value = currentInkAmount / maxInkAmount;
             }
         }
     }
