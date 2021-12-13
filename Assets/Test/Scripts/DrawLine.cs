@@ -24,12 +24,11 @@ public class DrawLine : MonoBehaviour
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.useWorldSpace = false;
-        positionCount = 0;
         mainCamera = Camera.main;
         currentInkAmount = maxInkAmount;
-
         inkAmountSlider = inkAmountBar.GetComponent<Slider>();
-        inkAmountSlider.value = 1;
+
+        Reset();
     }
 
     // Update is called once per frame
@@ -105,5 +104,6 @@ public class DrawLine : MonoBehaviour
         lineRenderer.positionCount = 0;
         prePos = Vector3.zero;
         currentInkAmount = maxInkAmount;
+        inkAmountSlider.value = 1;
     }
 }
