@@ -9,6 +9,7 @@ public class DrawLine : MonoBehaviour
     private Camera mainCamera;
     private Vector3 prePos;
     private Vector3 curPos;
+    private bool onDrawArea;
 
     public float maxInkAmount;
     public float currentInkAmount;
@@ -32,7 +33,7 @@ public class DrawLine : MonoBehaviour
         transform.position = mainCamera.transform.position + mainCamera.transform.forward * 10;
         transform.rotation = mainCamera.transform.rotation;
 
-        if (Input.GetMouseButton(0) && currentInkAmount > 0)
+        if (Input.GetMouseButton(0) && currentInkAmount > 0 && onDrawArea)
         {
             // 座標指定の設定をローカル座標系にしたため、与える座標にも手を加える
             curPos = Input.mousePosition;
@@ -78,6 +79,16 @@ public class DrawLine : MonoBehaviour
     public void OnResetButtonClick()
     {
         Reset();
+    }
+
+    public void PointerEnter()
+    {
+        onDrawArea = true;
+    }
+
+    public void PointerExit()
+    {
+        onDrawArea = false;
     }
 
     private void Reset()
