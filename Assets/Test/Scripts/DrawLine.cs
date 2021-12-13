@@ -73,13 +73,19 @@ public class DrawLine : MonoBehaviour
                 prePos = curPos;
             }
         }
+    }
 
-        //ƒŠƒZƒbƒg‚·‚é
-        //if (!(Input.GetMouseButton(0)))
-        //{
-        //    positionCount = 0;
-        //    posiotionList = new List<Vector3>();
-        //    currentInkAmount = maxInkAmount;
-        //}
+    public void OnResetButtonClick()
+    {
+        Reset();
+    }
+
+    private void Reset()
+    {
+        positionCount = 0;
+        posiotionList = new List<Vector3>();
+        lineRenderer.positionCount = 0;
+        prePos = Vector3.zero;
+        currentInkAmount = maxInkAmount;
     }
 }
