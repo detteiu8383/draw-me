@@ -27,6 +27,7 @@ public class MouseDraw : MonoBehaviour
     private Vector3 prevMousePos;
 
     private bool isMouseOnDrawArea;
+    private bool generated;
 
     private RectTransform drawAreaRectTransform;
     private new BoxCollider2D collider;
@@ -76,7 +77,7 @@ public class MouseDraw : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0) && isMouseOnDrawArea)
+        if (!generated && Input.GetMouseButton(0) && currInkLevel > 0 && isMouseOnDrawArea)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 drawAreaRectTransform,
@@ -90,7 +91,7 @@ public class MouseDraw : MonoBehaviour
             //Debug.Log(vec2MousePos);
             //Debug.Log(currMousePos);
 
-            if (prevMousePos == new Vector3(0,0,-10f))
+            if (prevMousePos == new Vector3(0, 0, -10f))
             {
                 prevMousePos = currMousePos;
                 return;
@@ -138,6 +139,8 @@ public class MouseDraw : MonoBehaviour
         drawBezierLine.ResetLine();
         inkLevelSlider.value = 1;
         pointsLine.SetActive(true);
+        generateBezierButton.interactable = true;
+        generated = false;
     }
 
     private void OnGenerateButtonClick()
@@ -148,6 +151,8 @@ public class MouseDraw : MonoBehaviour
         drawBezierLine.bezier = bezier;
         drawBezierLine.DrawBezier(divisionCount);
         pointsLine.SetActive(false);
+        generateBezierButton.interactable = false;
+        generated = true;
     }
 
     private void OnMouseEnter()
@@ -158,5 +163,19 @@ public class MouseDraw : MonoBehaviour
     private void OnMouseExit()
     {
         isMouseOnDrawArea = false;
+    }
+
+    private void Reset()
+    {
+        resetButton = GameObject.Find("ResetButton").GetComponent<Button>();
+        generateBezierButton = GameObject.Find("GenerateBezierButton").GetComponent<Button>();
+        inkLevelSlider = GameObject.Find("InkLevelSlider").GetComponent<Slider>();
+        pointsLine = GameObject.Find("PointsLine");
+        bezierLine = GameObject.Find("BezierLine");
+        
+        maxInkLevel = 2000;
+        drawThreshold = 1f;
+        maxError = 25;
+        divisionCount = 10;
     }
 }
