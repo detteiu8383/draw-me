@@ -15,12 +15,12 @@ public class MouseDraw : MonoBehaviour
     [SerializeField] GameObject bezierLine;
     private DrawBezierLine drawBezierLine;
 
-    [SerializeField] readonly float maxInkLevel;
+    [SerializeField] float maxInkLevel;
     private float currInkLevel;
 
-    [SerializeField] readonly float drawThreshold;
-    [SerializeField] readonly float maxError;
-    [SerializeField] readonly int divisionCount;
+    [SerializeField] float drawThreshold;
+    [SerializeField] float maxError;
+    [SerializeField] int divisionCount;
 
     private List<Vector3> drawPoints = new List<Vector3>();
     private Vector3 currMousePos;
