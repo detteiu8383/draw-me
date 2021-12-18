@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PointsToBezier
 {
-    public Bezier fitCurve(List<Vector3> points, float maxError)
+    public Bezier FitCurve(List<Vector3> points, float maxError)
     {
         if (points.Count < 2)
         {
@@ -13,37 +13,41 @@ public class PointsToBezier
         }
 
         int nPts = points.Count;
-        Vector3 leftTangent = computeTangent(points[1], points[0]);
-        Vector3 rightTangent = computeTangent(points[nPts - 2], points[nPts - 1]);
+        Vector3 leftTangent = ComputeTangent(points[1], points[0]);
+        Vector3 rightTangent = ComputeTangent(points[nPts - 2], points[nPts - 1]);
 
-        return fitCubic(points, leftTangent, rightTangent, maxError);
+        return FitCubic(points, leftTangent, rightTangent, maxError);
     }
 
-    private Bezier fitCubic(List<Vector3> points, Vector3 leftTangent, Vector3 rightTangent, float error)
+    private Bezier FitCubic(List<Vector3> points, Vector3 leftTangent, Vector3 rightTangent, float error)
     {
         int maxIterations = 4;
 
         if (points.Count == 2)
         {
             float dist = (points[0] - points[1]).magnitude / 3;
-            Bezier retBezier = new Bezier();
-            retBezier.ControlPoints = new List<Vector3> {
+            Bezier retBezier = new Bezier
+            {
+                ControlPoints = new List<Vector3> {
                 points[0],
                 points[0] + leftTangent * dist,
                 points[1] + rightTangent * dist,
                 points[1]
+                }
             };
             return retBezier;
         }
 
-        List<float> u = chordLengthParameterize(points);
+        List<float> u = ChordLengthParameterize(points);
 
-        (Segment segment, float maxError, int splitPoint) = generateAndReport(points, u, u, leftTangent, rightTangent);
+        (Segment segment, float maxError, int splitPoint) = GenerateAndReport(points, u, u, leftTangent, rightTangent);
 
         if (maxError == 0 || maxError < error)
         {
-            Bezier retBezier = new Bezier();
-            retBezier.Segments = new List<Segment> { segment };
+            Bezier retBezier = new Bezier
+            {
+                Segments = new List<Segment> { segment }
+            };
             return retBezier;
         }
 
@@ -55,13 +59,15 @@ public class PointsToBezier
 
             for (int i = 0; i < maxIterations; i++)
             {
-                uPrime = reparameterize(segment, points, uPrime);
-                (segment, maxError, splitPoint) = generateAndReport(points, u, uPrime, leftTangent, rightTangent);
+                uPrime = Reparameterize(segment, points, uPrime);
+                (segment, maxError, splitPoint) = GenerateAndReport(points, u, uPrime, leftTangent, rightTangent);
 
-                if (maxError < error) 
+                if (maxError < error)
                 {
-                    Bezier retBezier = new Bezier();
-                    retBezier.Segments = new List<Segment> { segment };
+                    Bezier retBezier = new Bezier
+                    {
+                        Segments = new List<Segment> { segment }
+                    };
                     return retBezier;
                 }
                 else if (splitPoint == prevSplit)
@@ -88,27 +94,27 @@ public class PointsToBezier
         Vector3 toCenterTangent = centerVector.normalized;
         Vector3 fromCenterTangent = toCenterTangent * -1;
 
-        bezier.AddSegments(fitCubic(points.GetRange(0, splitPoint + 1), leftTangent, toCenterTangent, error).Segments);
-        bezier.AddSegments(fitCubic(points.GetRange(splitPoint, points.Count - splitPoint), fromCenterTangent, rightTangent, error).Segments);
+        bezier.AddSegments(FitCubic(points.GetRange(0, splitPoint + 1), leftTangent, toCenterTangent, error).Segments);
+        bezier.AddSegments(FitCubic(points.GetRange(splitPoint, points.Count - splitPoint), fromCenterTangent, rightTangent, error).Segments);
 
         return bezier;
     }
 
-    private List<float> reparameterize(Segment segment, List<Vector3> points, List<float> parameters)
+    private List<float> Reparameterize(Segment segment, List<Vector3> points, List<float> parameters)
     {
         for (int i = 0; i < parameters.Count; i++)
         {
-            parameters[i] = newtonRaphsonRootFind(segment, points[i], parameters[i]);
+            parameters[i] = NewtonRaphsonRootFind(segment, points[i], parameters[i]);
         }
         return parameters;
     }
 
-    private float newtonRaphsonRootFind(Segment segment, Vector3 point, float u)
+    private float NewtonRaphsonRootFind(Segment segment, Vector3 point, float u)
     {
         Vector3 d = segment.GetPoint(u) - point;
         Vector3 qprime = segment.GetPrime(u);
         float numerator = Vector3.Dot(d, qprime);
-        float denominator = qprime.magnitude + 2 * Vector3.Dot(d, segment.getPrimePrime(u));
+        float denominator = qprime.magnitude + 2 * Vector3.Dot(d, segment.GetPrimePrime(u));
 
         if (denominator == 0)
         {
@@ -120,21 +126,20 @@ public class PointsToBezier
         }
     }
 
-    private Vector3 computeTangent(Vector3 pointA, Vector3 pointB)
+    private Vector3 ComputeTangent(Vector3 pointA, Vector3 pointB)
     {
         return (pointA - pointB).normalized;
     }
 
-    private List<float> chordLengthParameterize(List<Vector3> points)
+    private List<float> ChordLengthParameterize(List<Vector3> points)
     {
         List<float> u = new List<float>();
-        float currU = 0;
         float prevU = 0;
         Vector3 prevP = Vector3.zero;
 
         for (int i = 0; i < points.Count; i++)
         {
-            currU = i > 0 ? prevU + (points[i] - prevP).magnitude : 0;
+            float currU = i > 0 ? prevU + (points[i] - prevP).magnitude : 0;
             u.Add(currU);
             prevU = currU;
             prevP = points[i];
@@ -147,16 +152,16 @@ public class PointsToBezier
         return u;
     }
 
-    private (Segment segment, float maxError, int splitPoint) generateAndReport(List<Vector3> points, List<float> paramsOrig, List<float> paramsPrime, Vector3 leftTangent, Vector3 rightTangent)
+    private (Segment segment, float maxError, int splitPoint) GenerateAndReport(List<Vector3> points, List<float> paramsOrig, List<float> paramsPrime, Vector3 leftTangent, Vector3 rightTangent)
     {
-        Segment segment = generateSegment(points, paramsPrime, leftTangent, rightTangent);
+        Segment segment = GenerateSegment(points, paramsPrime, leftTangent, rightTangent);
 
-        (float maxError, int splitPoint) = computeMaxError(points, segment, paramsOrig);
+        (float maxError, int splitPoint) = ComputeMaxError(points, segment, paramsOrig);
 
         return (segment, maxError, splitPoint);
     }
 
-    private Segment generateSegment(List<Vector3> points, List<float> parameters, Vector3 leftTangent, Vector3 rightTangent)
+    private Segment GenerateSegment(List<Vector3> points, List<float> parameters, Vector3 leftTangent, Vector3 rightTangent)
     {
         Vector3 firstPoint = points[0];
         Vector3 lastPoint = points[points.Count - 1];
@@ -214,18 +219,18 @@ public class PointsToBezier
         return segment;
     }
 
-    private (float maxError, int splitPoint) computeMaxError(List<Vector3> points, Segment segment, List<float> paramerters)
+    private (float maxError, int splitPoint) ComputeMaxError(List<Vector3> points, Segment segment, List<float> paramerters)
     {
         float maxDist = 0;
         int splitPoint = Mathf.FloorToInt(points.Count / 2);
 
-        List<float> t_distMap = mapTtoRelativeDistances(segment, 10);
+        List<float> t_distMap = MapTtoRelativeDistances(segment, 10);
 
-        for (int i = 1; i < points.Count -1; i++)
+        for (int i = 1; i < points.Count - 1; i++)
         {
             Vector3 point = points[i];
 
-            float t = find_t(segment, paramerters[i], t_distMap, 10);
+            float t = Find_t(paramerters[i], t_distMap, 10);
 
             Vector3 v = segment.GetPoint(t) - point;
             float dist = v.magnitude;
@@ -240,7 +245,7 @@ public class PointsToBezier
         return (maxDist, splitPoint);
     }
 
-    private List<float> mapTtoRelativeDistances(Segment segment, int S_parts)
+    private List<float> MapTtoRelativeDistances(Segment segment, int S_parts)
     {
         List<float> S_t_dist = new List<float> { 0 };
         Vector3 S_t_prev = segment.start;
@@ -256,12 +261,12 @@ public class PointsToBezier
 
         for (int i = 0; i < S_t_dist.Count; i++)
         {
-            S_t_dist[i] = S_t_dist[i] / sumLen; 
+            S_t_dist[i] = S_t_dist[i] / sumLen;
         }
 
         return S_t_dist;
     }
-    private float find_t(Segment segment, float param, List<float> t_distMap, int S_parts)
+    private float Find_t(float param, List<float> t_distMap, int S_parts)
     {
         if (param < 0)
         {
@@ -286,5 +291,5 @@ public class PointsToBezier
         }
 
         return float.NaN;
-    }   
+    }
 }

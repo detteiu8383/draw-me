@@ -15,12 +15,12 @@ public class MouseDraw : MonoBehaviour
     [SerializeField] GameObject bezierLine;
     private DrawBezierLine drawBezierLine;
 
-    [SerializeField] float maxInkLevel;
+    [SerializeField] readonly float maxInkLevel;
     private float currInkLevel;
 
-    [SerializeField] float drawThreshold;
-    [SerializeField] float maxError;
-    [SerializeField] int divisionCount;
+    [SerializeField] readonly float drawThreshold;
+    [SerializeField] readonly float maxError;
+    [SerializeField] readonly int divisionCount;
 
     private List<Vector3> drawPoints = new List<Vector3>();
     private Vector3 currMousePos;
@@ -114,7 +114,7 @@ public class MouseDraw : MonoBehaviour
 
                 drawPoints.Add(currMousePos);
                 drawPointsLine.points = drawPoints;
-                drawPointsLine.drawLine();
+                drawPointsLine.DrawLine();
 
                 prevMousePos = currMousePos;
 
@@ -134,8 +134,8 @@ public class MouseDraw : MonoBehaviour
         prevMousePos = new Vector3(0, 0, -10f);
         drawPoints = new List<Vector3>();
         currInkLevel = maxInkLevel;
-        drawPointsLine.resetLine();
-        drawBezierLine.resetLine();
+        drawPointsLine.ResetLine();
+        drawBezierLine.ResetLine();
         inkLevelSlider.value = 1;
         pointsLine.SetActive(true);
     }
@@ -144,7 +144,7 @@ public class MouseDraw : MonoBehaviour
     {
         Debug.Log("Generate Bezier Curve.");
 
-        Bezier bezier = new PointsToBezier().fitCurve(drawPoints, maxError);
+        Bezier bezier = new PointsToBezier().FitCurve(drawPoints, maxError);
         drawBezierLine.bezier = bezier;
         drawBezierLine.DrawBezier(divisionCount);
         pointsLine.SetActive(false);

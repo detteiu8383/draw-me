@@ -31,7 +31,7 @@ public class DrawBezierLine : MonoBehaviour
     public void DrawBezier(int divisions)
     {
         drawPointsLine.points = bezier.GetAllPoints(divisions);
-        drawPointsLine.drawLine();
+        drawPointsLine.DrawLine();
     }
 
     private void OnDrawGizmos()
@@ -49,9 +49,9 @@ public class DrawBezierLine : MonoBehaviour
         }
     }
 
-    public void resetLine()
+    public void ResetLine()
     {
         bezier = new Bezier();
-        drawPointsLine.resetLine();
+        drawPointsLine.ResetLine();
     }
 }

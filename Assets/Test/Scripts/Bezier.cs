@@ -38,7 +38,7 @@ public class Segment
         );
     }
 
-    public Vector3 getPrimePrime(float t)
+    public Vector3 GetPrimePrime(float t)
     {
         return (
             ((control2 - (control1 * 2)) + start) * 6 * (1.0f - t) +

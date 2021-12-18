@@ -24,13 +24,13 @@ public class DrawPointsLine : MonoBehaviour
         
     }
 
-    public void drawLine()
+    public void DrawLine()
     {
         lineRenderer.positionCount = points.Count;
         lineRenderer.SetPositions(points.ToArray());
     }
 
-    public void resetLine()
+    public void ResetLine()
     {
         lineRenderer.positionCount = 0;
         points = new List<Vector3>();
