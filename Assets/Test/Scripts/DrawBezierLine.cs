@@ -34,20 +34,20 @@ public class DrawBezierLine : MonoBehaviour
         drawPointsLine.DrawLine();
     }
 
-    private void OnDrawGizmos()
-    {
-        for (int i = 0; i < bezier.ControlPoints.Count; i++)
-        {
-            Gizmos.color = new Color(1f, 0, 0, 1f);
-            Gizmos.DrawSphere(bezier.ControlPoints[i], 0.25f);
-        }
-        for (int i = 0; i < bezier.Segments.Count; i++)
-        {
-            Gizmos.color = new Color(0, 0, 1f, 1f);
-            Gizmos.DrawLine(bezier.Segments[i].start, bezier.Segments[i].control1);
-            Gizmos.DrawLine(bezier.Segments[i].end, bezier.Segments[i].control2);
-        }
-    }
+    //private void OnDrawGizmos()
+    //{
+    //    for (int i = 0; i < bezier.ControlPoints.Count; i++)
+    //    {
+    //        Gizmos.color = new Color(1f, 0, 0, 1f);
+    //        Gizmos.DrawSphere(bezier.ControlPoints[i], 0.25f);
+    //    }
+    //    for (int i = 0; i < bezier.Segments.Count; i++)
+    //    {
+    //        Gizmos.color = new Color(0, 0, 1f, 1f);
+    //        Gizmos.DrawLine(bezier.Segments[i].start, bezier.Segments[i].control1);
+    //        Gizmos.DrawLine(bezier.Segments[i].end, bezier.Segments[i].control2);
+    //    }
+    //}
 
     public void ResetLine()
     {
