@@ -325,9 +325,9 @@ MonoBehaviour:
   inkLevelSlider: {fileID: 714534591}
   pointsLine: {fileID: 1750162740}
   bezierLine: {fileID: 380603686}
-  maxInkLevel: 5000
-  drawThreshold: 5
-  maxError: 20
+  maxInkLevel: 2000
+  drawThreshold: 1
+  maxError: 10
   divisionCount: 10
 --- !u!114 &253055652
 MonoBehaviour:
