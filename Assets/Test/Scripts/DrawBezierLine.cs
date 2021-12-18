@@ -3,21 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class BezierLine : MonoBehaviour
+public class DrawBezierLine : MonoBehaviour
 {
-    public List<Vector3> controlPoints;
-    public LineRenderer lineRenderer;
-
+    public LineRenderer bezierRenderer;
     public int DIVISION_COUNT = 50;
-    private Bezier bezier = new Bezier();
+    public Bezier bezier = new Bezier();
+
+    private DrawPointsLine drawPointsLine;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (!lineRenderer)
+        if (!bezierRenderer)
         {
-            lineRenderer = GetComponent<LineRenderer>();
+            bezierRenderer = GetComponent<LineRenderer>();
         }
+
+        drawPointsLine = gameObject.AddComponent<DrawPointsLine>();
+        drawPointsLine.lineRenderer = bezierRenderer;
     }
     // Update is called once per frame
     void Update()
@@ -25,16 +28,10 @@ public class BezierLine : MonoBehaviour
 
     }
 
-    public void SetBezier(Bezier bezier)
+    public void DrawBezier(int divisions)
     {
-        this.bezier = bezier;
-    }
-
-    public void DrawLine(int divisions)
-    {
-        List<Vector3> drawPoints = bezier.GetAllPoints(divisions);
-        lineRenderer.positionCount = drawPoints.Count;
-        lineRenderer.SetPositions(drawPoints.ToArray());
+        drawPointsLine.points = bezier.GetAllPoints(divisions);
+        drawPointsLine.drawLine();
     }
 
     private void OnDrawGizmos()
@@ -50,5 +47,11 @@ public class BezierLine : MonoBehaviour
             Gizmos.DrawLine(bezier.Segments[i].start, bezier.Segments[i].control1);
             Gizmos.DrawLine(bezier.Segments[i].end, bezier.Segments[i].control2);
         }
+    }
+
+    public void resetLine()
+    {
+        bezier = new Bezier();
+        drawPointsLine.resetLine();
     }
 }
