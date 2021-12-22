@@ -6,13 +6,12 @@ using UnityEngine;
 public class DrawBezierLine : MonoBehaviour
 {
     public LineRenderer bezierRenderer;
-    public int DIVISION_COUNT = 50;
     public Bezier bezier = new Bezier();
 
     private DrawPointsLine drawPointsLine;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (!bezierRenderer)
         {

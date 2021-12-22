@@ -56,7 +56,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 36e41ceb1fd64f14eac3e5591f65cd80, type: 2}
+  - {fileID: 2100000, guid: ca09622897d392e43baacaf0aabd9d99, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -146,4 +146,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bezierRenderer: {fileID: 4327276427942880392}
-  DIVISION_COUNT: 50

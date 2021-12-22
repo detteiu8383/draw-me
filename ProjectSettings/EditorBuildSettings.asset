@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Test/Scenes/DrawBezierTest.unity
+    guid: ed2123d017443fb4dadaa1b1ff354b69
+  - enabled: 1
+    path: Assets/Test/Scenes/MoveAlongBezierTest.unity
+    guid: 2306130c6c439eb4db9e1341d459af2e
   m_configObjects: {}

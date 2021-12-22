@@ -223,14 +223,16 @@ public class PointsToBezier
     {
         float maxDist = 0;
         int splitPoint = Mathf.FloorToInt(points.Count / 2);
+        float segLength = segment.Length;
 
-        List<float> t_distMap = MapTtoRelativeDistances(segment, 10);
+        //List<float> t_distMap = MapTtoRelativeDistances(segment, 10);
 
         for (int i = 1; i < points.Count - 1; i++)
         {
             Vector3 point = points[i];
 
-            float t = Find_t(paramerters[i], t_distMap, 10);
+            float t = segment.LengthToT(paramerters[i] * segLength);
+            //float t = Find_t(paramerters[i], t_distMap, 10);
 
             Vector3 v = segment.GetPoint(t) - point;
             float dist = v.magnitude;
@@ -245,51 +247,52 @@ public class PointsToBezier
         return (maxDist, splitPoint);
     }
 
-    private List<float> MapTtoRelativeDistances(Segment segment, int S_parts)
-    {
-        List<float> S_t_dist = new List<float> { 0 };
-        Vector3 S_t_prev = segment.start;
-        float sumLen = 0;
+    //private List<float> MapTtoRelativeDistances(Segment segment, int S_parts)
+    //{
+    //    List<float> S_t_dist = new List<float> { 0 };
+    //    Vector3 S_t_prev = segment.start;
+    //    float sumLen = 0;
 
-        for (int i = 1; i <= S_parts; i++)
-        {
-            Vector3 S_t_curr = segment.GetPoint(i / S_parts);
-            sumLen += (S_t_curr - S_t_prev).magnitude;
-            S_t_dist.Add(sumLen);
-            S_t_prev = S_t_curr;
-        }
+    //    for (int i = 1; i <= S_parts; i++)
+    //    {
+    //        Vector3 S_t_curr = segment.GetPoint(i / S_parts);
+    //        sumLen += (S_t_curr - S_t_prev).magnitude;
+    //        S_t_dist.Add(sumLen);
+    //        S_t_prev = S_t_curr;
+    //    }
 
-        for (int i = 0; i < S_t_dist.Count; i++)
-        {
-            S_t_dist[i] = S_t_dist[i] / sumLen;
-        }
+    //    for (int i = 0; i < S_t_dist.Count; i++)
+    //    {
+    //        S_t_dist[i] = S_t_dist[i] / sumLen;
+    //    }
 
-        return S_t_dist;
-    }
-    private float Find_t(float param, List<float> t_distMap, int S_parts)
-    {
-        if (param < 0)
-        {
-            return 0;
-        }
-        if (param > 1)
-        {
-            return 1;
-        }
+    //    return S_t_dist;
+    //}
 
-        for (int i = 1; i <= S_parts; i++)
-        {
-            if (param <= t_distMap[i])
-            {
-                float tMin = (i - 1) / S_parts;
-                float tMax = i / S_parts;
-                float lenMin = t_distMap[i - 1];
-                float lenMax = t_distMap[i];
+    //private float Find_t(float param, List<float> t_distMap, int S_parts)
+    //{
+    //    if (param < 0)
+    //    {
+    //        return 0;
+    //    }
+    //    if (param > 1)
+    //    {
+    //        return 1;
+    //    }
 
-                return ((param - lenMin) / (lenMax - lenMin)) * (tMax - tMin) + tMin;
-            }
-        }
+    //    for (int i = 1; i <= S_parts; i++)
+    //    {
+    //        if (param <= t_distMap[i])
+    //        {
+    //            float tMin = (i - 1) / S_parts;
+    //            float tMax = i / S_parts;
+    //            float lenMin = t_distMap[i - 1];
+    //            float lenMax = t_distMap[i];
 
-        return float.NaN;
-    }
+    //            return ((param - lenMin) / (lenMax - lenMin)) * (tMax - tMin) + tMin;
+    //        }
+    //    }
+
+    //    return float.NaN;
+    //}
 }

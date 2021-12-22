@@ -7,6 +7,8 @@ public class Segment
 {
     public Vector3 start, control1, control2, end;
 
+    private int DIVISION = 10;
+
     public Segment(Vector3 start, Vector3 control1, Vector3 control2, Vector3 end)
     {
         this.start = start;
@@ -45,12 +47,72 @@ public class Segment
             ((end - (control2 * 2)) + control1) * 6 * t
         );
     }
+
+    public List<float> MapTtoRelativeDistances(int S_parts)
+    {
+        List<float> S_t_dist = new List<float> { 0 };
+        Vector3 S_t_prev = start;
+        float sumLen = 0;
+
+        for (int i = 1; i <= S_parts; i++)
+        {
+            Vector3 S_t_curr = GetPoint(i / S_parts);
+            sumLen += (S_t_curr - S_t_prev).magnitude;
+            S_t_dist.Add(sumLen);
+            S_t_prev = S_t_curr;
+        }
+
+        return S_t_dist;
+    }
+
+    public float LengthToT(float length)
+    {
+        if (length < 0)
+        {
+            return 0;
+        }
+
+        List<float> map = MapTtoRelativeDistances(DIVISION);
+
+        if (length > map[map.Count - 1])
+        {
+            return 1;
+        }
+
+
+        for (int i = 1; i <= DIVISION; i++)
+        {
+            if (length <= map[i])
+            {
+                float tMin = (i - 1) / DIVISION;
+                float tMax = i / DIVISION;
+                float lenMin = map[i - 1];
+                float lenMax = map[i];
+
+                return ((length - lenMin) / (lenMax - lenMin)) * (tMax - tMin) + tMin;
+            }
+        }
+
+        return float.NaN;
+    }
+
+    public float Length
+    {
+        get
+        {
+            List<float> map = MapTtoRelativeDistances(DIVISION);
+            return map[map.Count - 1];
+        }
+    }
+
+
 }
 
 // ベジェ曲線全体(連続したsegmentの集合)
 public class Bezier
 {
     private List<Segment> segments = new List<Segment>();
+    private int DIVISION = 10;
 
     public int NumSegments
     {
@@ -133,7 +195,7 @@ public class Bezier
     {
         for (int i = 0; i < segments.Count; i++)
         {
-           AddSegment(segments[i]);
+            AddSegment(segments[i]);
         }
     }
 
@@ -171,4 +233,60 @@ public class Bezier
         points.Add(segments[segments.Count - 1].end);
         return points;
     }
+
+    public List<float> MapTtoRelativeDistances(int S_parts)
+    {
+        List<float> map = new List<float>();
+        float currLength = 0f;
+        for (int i = 0; i < segments.Count; i++)
+        {
+            List<float> segMap = segments[i].MapTtoRelativeDistances(S_parts);
+            for (int j = 0; j < segMap.Count - 1; j++)
+            {
+                map.Add(segMap[j] + currLength);
+            }
+            currLength = segMap[segMap.Count - 1];
+        }
+        return map;
+    }
+
+    public float LengthToT(float length)
+    {
+        if (length < 0)
+        {
+            return 0;
+        }
+
+        List<float> map = MapTtoRelativeDistances(DIVISION);
+
+        if (length > map[map.Count - 1])
+        {
+            return segments.Count;
+        }
+
+        for (int i = 1; i <= DIVISION; i++)
+        {
+            if (length <= map[i])
+            {
+                float tMin = (i - 1) / DIVISION;
+                float tMax = i / DIVISION;
+                float lenMin = map[i - 1];
+                float lenMax = map[i];
+
+                return (((length - lenMin) / (lenMax - lenMin)) * (tMax - tMin) + tMin) * segments.Count;
+            }
+        }
+
+        return float.NaN;
+    }
+
+    public float Length
+    {
+        get
+        {
+            List<float> map = MapTtoRelativeDistances(DIVISION);
+            return map[map.Count - 1];
+        }
+    }
+
 }

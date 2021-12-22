@@ -9,7 +9,7 @@ public class DrawPointsLine : MonoBehaviour
     public List<Vector3> points;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if (!lineRenderer)
         {
